@@ -10,7 +10,7 @@ import { LiveSimulationPage } from './pages/LiveSimulationPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { DesignGalleryPage } from './pages/DesignGalleryPage';
 import { RecapEmailPage } from './pages/RecapEmailPage';
-
+import { OnboardingPage } from './pages/OnboardingPage';
 
 // 404 Page Component
 const NotFoundPage: React.FC = () => (
@@ -45,6 +45,7 @@ export function App() {
         <Routes>
           {/* Public Landing & Marketing */}
           <Route path="/" element={<LandingPage />} />
+          <Route path="/onboarding" element={<OnboardingPage />} />
 
           {/* Core Product AppShell Routes */}
           <Route

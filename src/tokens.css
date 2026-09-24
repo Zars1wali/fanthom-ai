@@ -1,0 +1,134 @@
+/* ===================================================================
+   Design tokens — plan section 3
+   Light theme. Structured for dark-mode swap via :root[data-theme="dark"].
+   =================================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Schibsted+Grotesk:wght@400;500;600;700;800&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Literata:opsz,wght@7..72,400;7..72,500;7..72,600&display=swap');
+
+:root {
+  /* ── Surfaces ──────────────────────────────────────── */
+  --canvas:       #E8ECEA;  /* Bone Grey: app background */
+  --surface:      #F8FAF9;  /* White Tape: panels */
+  --surface-sunk: #DDE3E0;  /* Gaffer: timeline bed, wells */
+  --line:         #C6CFCB;
+
+  /* ── Ink (tinted, not #000) ────────────────────────── */
+  --ink:   #0F2A33;         /* Deep Sea Ink */
+  --ink-2: #3F5860;         /* secondary */
+  --ink-3: #55676D;         /* tertiary, ≥4.5:1 on --surface */
+
+  /* ── Action / Selection / Playhead ─────────────────── */
+  --cue:      #2B3FE0;      /* Ultramarine */
+  --cue-tint: #E3E7FD;
+  --cue-hover: #1F2FB0;
+
+  /* ── Highlighter pen (user highlights only) ────────── */
+  --hl:      #FFC629;
+  --hl-tint: #FFF1BF;
+
+  /* ── Tally: recording / live only ──────────────────── */
+  --live: #E5484D;
+  --live-tint: #FDDDE0;
+
+  /* ── Status ────────────────────────────────────────── */
+  --ok:   #1B8A5A;
+  --warn: #8F5F0A;
+  --err:  #C42B31;
+
+  /* ── Speaker palette (section 3.2) ─────────────────── */
+  --speaker-1: #E4572E;  /* Vermilion */
+  --speaker-2: #178F84;  /* Teal */
+  --speaker-3: #7A55B8;  /* Violet */
+  --speaker-4: #B88A00;  /* Ochre */
+  --speaker-5: #2D7FD3;  /* Azure */
+  --speaker-6: #CC3A78;  /* Rose */
+  --speaker-7: #5E8B2E;  /* Moss */
+  --speaker-8: #566575;  /* Slate */
+
+  /* Speaker tints (~18% opacity) */
+  --speaker-1-tint: rgba(228, 87, 46, 0.18);
+  --speaker-2-tint: rgba(23, 143, 132, 0.18);
+  --speaker-3-tint: rgba(122, 85, 184, 0.18);
+  --speaker-4-tint: rgba(184, 138, 0, 0.18);
+  --speaker-5-tint: rgba(45, 127, 211, 0.18);
+  --speaker-6-tint: rgba(204, 58, 120, 0.18);
+  --speaker-7-tint: rgba(94, 139, 46, 0.18);
+  --speaker-8-tint: rgba(86, 101, 117, 0.18);
+
+  /* ── Typography ────────────────────────────────────── */
+  --font-ui:    'Schibsted Grotesk', system-ui, -apple-system, sans-serif;
+  --font-prose: 'Literata', Georgia, 'Times New Roman', serif;
+
+  /* Type scale (ratio ~1.2): 12 · 14 · 17 · 20 · 24 · 29 · 35 · 42 · 50 */
+  --text-xs:      12px;
+  --text-sm:      14px;
+  --text-base:    17px;
+  --text-lg:      20px;
+  --text-xl:      24px;
+  --text-2xl:     29px;
+  --text-3xl:     35px;
+  --text-4xl:     42px;
+  --text-5xl:     50px;
+
+  --leading-tight:   1.02;
+  --leading-snug:    1.18;
+  --leading-normal:  1.43;
+  --leading-relaxed: 1.65;
+
+  /* ── Shape ─────────────────────────────────────────── */
+  --radius-chip:    2px;   /* tape-like markers/chips */
+  --radius-control: 6px;   /* buttons, inputs */
+  --radius-panel:   12px;  /* panels, cards */
+  --radius-score:   4px;   /* Score bed */
+
+  /* ── Spacing (4px base) ────────────────────────────── */
+  --sp-1:  4px;
+  --sp-2:  8px;
+  --sp-3:  12px;
+  --sp-4:  16px;
+  --sp-5:  24px;
+  --sp-6:  32px;
+  --sp-7:  48px;
+  --sp-8:  72px;
+
+  /* ── Depth ─────────────────────────────────────────── */
+  --shadow-float: 0 12px 32px -8px rgba(15,42,51,.28), 0 2px 6px rgba(15,42,51,.12);
+
+  /* ── Motion ────────────────────────────────────────── */
+  --ease: cubic-bezier(.2,.8,.2,1);
+  --duration-fast:   120ms;
+  --duration-base:   200ms;
+  --duration-slow:   320ms;
+  --duration-score:  700ms;
+
+  /* ── Layout ────────────────────────────────────────── */
+  --rail-collapsed: 56px;
+  --rail-expanded:  220px;
+  --topbar-height:  52px;
+  --player-height:  360px;
+  --score-lane-h:   20px;
+
+  /* ── Focus ─────────────────────────────────────────── */
+  --focus-ring: 2px solid var(--cue);
+  --focus-offset: 2px;
+
+  /* ── Z-index ───────────────────────────────────────── */
+  --z-rail:     100;
+  --z-topbar:   200;
+  --z-sticky:   300;
+  --z-overlay:  400;
+  --z-modal:    500;
+  --z-toast:    600;
+  --z-tooltip:  700;
+}
+
+/* ── Reduced motion ──────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+  :root {
+    --duration-fast:  0ms;
+    --duration-base:  0ms;
+    --duration-slow:  0ms;
+    --duration-score: 0ms;
+  }
+}

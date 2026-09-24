@@ -1,21 +1,34 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
+import { SiteShell } from '../components/shell/SiteShell';
 import { showpieceMeeting } from '../data/seed/showpiece';
 import { ClockPlayer, type PlayerAdapter } from '../player/PlayerAdapter';
 import { Score } from '../components/meeting/Score';
 import { ReceiptChip, Button, Chip, formatTimecode } from '../components/ui';
+import { ROLE_SOLUTIONS } from '../content/roles';
 
 export const LandingPage: React.FC = () => {
   const navigate = useNavigate();
   const demoMeeting = showpieceMeeting;
-  const [currentTime, setCurrentTime] = useState(360);
+
+  // Mini player state for interactive hero playground
+  const [currentTime, setCurrentTime] = useState(420);
   const [isPlaying, setIsPlaying] = useState(false);
-  const [activeAudience, setActiveAudience] = useState<'teams' | 'individuals'>('teams');
   const playerRef = useRef<PlayerAdapter | null>(null);
 
-  // Initialize mini player for interactive hero playground
-  React.useEffect(() => {
-    const clock = new ClockPlayer(demoMeeting.duration, 360);
+  // Capture mode toggle: bot vs bot-free
+  const [captureMode, setCaptureMode] = useState<'bot' | 'bot_free'>('bot_free');
+
+  // Role switcher state
+  const [selectedRole, setSelectedRole] = useState<'sales' | 'customer-success' | 'teams'>('sales');
+
+  // Ask AI playground state
+  const [activeQuestion, setActiveQuestion] = useState(
+    'What pricing model and per-seat fee was approved during this meeting?'
+  );
+
+  useEffect(() => {
+    const clock = new ClockPlayer(demoMeeting.duration, 420);
     playerRef.current = clock;
     clock.onTimeUpdate(setCurrentTime);
     clock.onStateChange(setIsPlaying);
@@ -27,515 +40,428 @@ export const LandingPage: React.FC = () => {
     setCurrentTime(time);
   };
 
+  const currentRoleData = ROLE_SOLUTIONS[selectedRole];
+
   return (
-    <div style={{ background: 'var(--canvas)', minHeight: '100dvh', display: 'flex', flexDirection: 'column', color: 'var(--ink)' }}>
-      {/* Top Banner Announcement */}
-      <div
-        style={{
-          background: 'var(--ink)',
-          color: '#ffffff',
-          padding: '10px 20px',
-          textAlign: 'center',
-          fontSize: '13px',
-          fontWeight: 600,
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'center',
-          gap: '8px',
-        }}
-      >
-        <span style={{ background: 'var(--cue)', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 800 }}>
-          NEW
-        </span>
-        <span>Fathom is now available <strong>bot-free</strong> — record without an avatar in the call.</span>
-        <Link to="/onboarding" style={{ color: 'var(--hl)', marginLeft: '8px', textDecoration: 'underline' }}>
-          Try it now →
-        </Link>
-      </div>
-
-      {/* Main Navigation Header */}
-      <header
-        style={{
-          padding: '16px 40px',
-          display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'space-between',
-          borderBottom: '1px solid var(--line)',
-          background: 'var(--surface)',
-          position: 'sticky',
-          top: 0,
-          zIndex: 100,
-        }}
-      >
-        <div style={{ display: 'flex', alignItems: 'center', gap: '32px' }}>
-          <Link to="/" style={{ display: 'flex', alignItems: 'center', gap: '8px', textDecoration: 'none' }}>
-            <span style={{ width: '10px', height: '10px', borderRadius: '50%', background: 'var(--live)' }} />
-            <span style={{ fontWeight: 800, fontSize: '20px', color: 'var(--ink)', letterSpacing: '-0.02em' }}>
-              FATHOM
-            </span>
-          </Link>
-
-          <nav style={{ display: 'flex', alignItems: 'center', gap: '20px', fontSize: '14px', fontWeight: 600 }}>
-            <a href="#solutions" style={{ color: 'var(--ink-2)' }}>Solutions</a>
-            <a href="#features" style={{ color: 'var(--ink-2)' }}>Features</a>
-            <a href="#integrations" style={{ color: 'var(--ink-2)' }}>Integrations</a>
-            <a href="#pricing" style={{ color: 'var(--ink-2)' }}>Pricing</a>
-            <Link to="/dev/design" style={{ color: 'var(--ink-3)', fontSize: '12px' }}>/dev/design</Link>
-          </nav>
-        </div>
-
-        <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-          <Link to="/meetings" style={{ fontSize: '14px', fontWeight: 600, color: 'var(--ink)' }}>
-            Meetings App
-          </Link>
-          <Button variant="primary" onClick={() => navigate('/onboarding')}>
-            Get Started - Free Forever
-          </Button>
-        </div>
-      </header>
-
-      {/* HERO SECTION */}
-      <section style={{ maxWidth: '1160px', margin: '48px auto 32px', padding: '0 24px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', gap: '8px', marginBottom: '20px', background: 'var(--surface-sunk)', padding: '6px 14px', borderRadius: '20px' }}>
-          <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--live)' }} />
-          <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink-2)' }}>
-            #1 Rated AI Meeting Assistant on G2 · 4.9/5 Stars
-          </span>
-        </div>
-
-        <h1
-          tabIndex={-1}
-          style={{
-            fontSize: '54px',
-            fontWeight: 800,
-            lineHeight: 1.08,
-            letterSpacing: '-0.03em',
-            color: 'var(--ink)',
-            marginBottom: '20px',
-            maxWidth: '920px',
-            marginLeft: 'auto',
-            marginRight: 'auto',
-          }}
-        >
-          Fathom summarizes your meetings so you can focus on the conversation.
-        </h1>
-
-        <p
-          style={{
-            fontSize: '20px',
-            color: 'var(--ink-2)',
-            maxWidth: '760px',
-            margin: '0 auto 36px',
-            lineHeight: 1.5,
-          }}
-        >
-          Never take notes again. Shockingly accurate transcripts, instant summaries with clickable timecode receipts, and auto-synced CRM updates. Now available bot-free.
-        </p>
-
-        <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '40px' }}>
-          <Button size="lg" variant="primary" onClick={() => navigate('/onboarding')} style={{ padding: '0 28px', fontSize: '16px', height: '46px' }}>
-            Get started - free forever →
-          </Button>
-          <Button size="lg" variant="secondary" onClick={() => navigate('/meetings/mtg-q3-roadmap')} style={{ height: '46px' }}>
-            Explore 8-Person Flagship Demo
-          </Button>
-        </div>
-
-        {/* Hero Visual Mockup Image */}
-        <div
-          style={{
-            borderRadius: '16px',
-            overflow: 'hidden',
-            boxShadow: 'var(--shadow-float)',
-            border: '1px solid var(--line)',
-            background: 'var(--surface)',
-            marginBottom: '48px',
-          }}
-        >
-          <img
-            src="/images/fathom_meeting_hero.jpg"
-            alt="Fathom AI Meeting Notetaker Interface showing 8-person call, speaker timeline, and receipt-backed summary"
-            style={{ width: '100%', height: 'auto', display: 'block' }}
-          />
-        </div>
-
-        {/* Social Proof: Used at 300K+ companies */}
-        <div style={{ padding: '24px 0', borderTop: '1px solid var(--line)', borderBottom: '1px solid var(--line)' }}>
-          <p style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', letterSpacing: '0.06em', color: 'var(--ink-3)', marginBottom: '16px' }}>
-            Used at 300,000+ companies worldwide
-          </p>
-          <div style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '48px', flexWrap: 'wrap', opacity: 0.75, fontWeight: 700, fontSize: '18px', color: 'var(--ink-2)' }}>
-            <span>Google</span>
-            <span>Zoom</span>
-            <span>Meta</span>
-            <span>Salesforce</span>
-            <span>HubSpot</span>
-            <span>Stripe</span>
-            <span>Notion</span>
-          </div>
-        </div>
-      </section>
-
-      {/* TEAMS VS INDIVIDUALS INTERACTIVE SWITCHER */}
-      <section id="solutions" style={{ maxWidth: '1100px', margin: '48px auto', padding: '0 24px', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '32px' }}>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.02em', marginBottom: '8px' }}>
-            Whether you’re a team of 1 or 1,000, Fathom’s got your back
-          </h2>
-          <div style={{ display: 'inline-flex', gap: '8px', background: 'var(--surface-sunk)', padding: '4px', borderRadius: '8px', marginTop: '12px' }}>
-            <button
-              type="button"
-              className={`btn btn-sm ${activeAudience === 'teams' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setActiveAudience('teams')}
-              style={{ padding: '6px 18px', fontSize: '14px' }}
-            >
-              Fathom for Teams
-            </button>
-            <button
-              type="button"
-              className={`btn btn-sm ${activeAudience === 'individuals' ? 'btn-primary' : 'btn-ghost'}`}
-              onClick={() => setActiveAudience('individuals')}
-              style={{ padding: '6px 18px', fontSize: '14px' }}
-            >
-              Fathom for Individuals
-            </button>
-          </div>
-        </div>
-
-        {activeAudience === 'teams' ? (
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px', alignItems: 'center' }}>
-            <div>
-              <Chip variant="cue">Shared Intelligence</Chip>
-              <h3 style={{ fontSize: '28px', fontWeight: 800, margin: '16px 0 12px' }}>
-                Shared visibility. Smarter execution.
-              </h3>
-              <p style={{ color: 'var(--ink-2)', fontSize: '16px', lineHeight: 1.6, marginBottom: '24px' }}>
-                Fathom gives teams a shared source of truth across every customer conversation, internal sync, and strategy call – so decisions are visible, follow-through is consistent, and nothing gets lost between meetings.
-              </p>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px' }}>
-                <li>✓ <strong>Automatic notes & CRM updates</strong> reduce follow-ups and admin across the entire team.</li>
-                <li>✓ <strong>Turn conversations into clear next steps</strong> that move deals and projects forward.</li>
-                <li>✓ <strong>Cross-meeting Ask AI</strong> surfaces customer signals, competitor mentions, and pricing trends.</li>
-              </ul>
-              <div style={{ marginTop: '28px' }}>
-                <Button variant="primary" onClick={() => navigate('/onboarding')}>
-                  Try Fathom for Teams →
-                </Button>
-              </div>
-            </div>
-            <div style={{ background: 'var(--surface-sunk)', borderRadius: '12px', padding: '24px', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink-3)', textTransform: 'uppercase', marginBottom: '12px' }}>
-                Team Impact Metrics
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--cue)' }}>6+ Hours Saved</div>
-                  <div style={{ fontSize: '13px', color: 'var(--ink-2)' }}>per team member every week on meeting recaps and manual CRM updates.</div>
-                </div>
-                <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ok)' }}>3X Faster</div>
-                  <div style={{ fontSize: '13px', color: 'var(--ink-2)' }}>from spoken customer objections to engineering sprint tickets.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        ) : (
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '40px', alignItems: 'center' }}>
-            <div>
-              <Chip variant="hl">Personal Productivity</Chip>
-              <h3 style={{ fontSize: '28px', fontWeight: 800, margin: '16px 0 12px' }}>
-                Fully present. Always prepared.
-              </h3>
-              <p style={{ color: 'var(--ink-2)', fontSize: '16px', lineHeight: 1.6, marginBottom: '24px' }}>
-                Fathom captures every detail of your meetings so you can stay present, ask better questions, and never scramble to take messy notes during important calls.
-              </p>
-              <ul style={{ display: 'flex', flexDirection: 'column', gap: '12px', fontSize: '15px' }}>
-                <li>✓ <strong>Never touch a notepad again</strong> — 38 minutes saved on average per meeting.</li>
-                <li>✓ <strong>One-click highlight hotkey (H)</strong> marks moments and decisions live.</li>
-                <li>✓ <strong>Instant recap email</strong> with action items delivered right as the call ends.</li>
-              </ul>
-              <div style={{ marginTop: '28px' }}>
-                <Button variant="primary" onClick={() => navigate('/onboarding')}>
-                  Get Started Free →
-                </Button>
-              </div>
-            </div>
-            <div style={{ background: 'var(--surface-sunk)', borderRadius: '12px', padding: '24px', border: '1px solid var(--line)' }}>
-              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink-3)', textTransform: 'uppercase', marginBottom: '12px' }}>
-                Individual Benefits
-              </div>
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '16px' }}>
-                <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--cue)' }}>100% Focused</div>
-                  <div style={{ fontSize: '13px', color: 'var(--ink-2)' }}>Eye contact with clients instead of looking down at your keyboard.</div>
-                </div>
-                <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px' }}>
-                  <div style={{ fontSize: '28px', fontWeight: 800, color: 'var(--ok)' }}>Zero Missed Tasks</div>
-                  <div style={{ fontSize: '13px', color: 'var(--ink-2)' }}>AI surfaces every commitment made by you or the client.</div>
-                </div>
-              </div>
-            </div>
-          </div>
-        )}
-      </section>
-
-      {/* THREE CORE PILLARS: CLARITY, MOMENTUM, EASE */}
-      <section id="features" style={{ maxWidth: '1100px', margin: '48px auto', padding: '0 24px', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '48px' }}>
-          <Chip variant="cue">The Three Pillars</Chip>
-          <h2 style={{ fontSize: '36px', fontWeight: 800, letterSpacing: '-0.02em', marginTop: '12px' }}>
-            Meeting intelligence engineered for zero friction
-          </h2>
-        </div>
-
-        {/* Pillar 1: Clarity */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '36px', marginBottom: '32px', display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '32px', alignItems: 'center' }}>
-          <div>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--cue)', textTransform: 'uppercase' }}>01. Clarity</span>
-            <h3 style={{ fontSize: '26px', fontWeight: 800, margin: '8px 0 12px' }}>
-              Unforgettable meetings... quite literally
-            </h3>
-            <p style={{ color: 'var(--ink-2)', fontSize: '15px', lineHeight: 1.6, marginBottom: '16px' }}>
-              Shockingly accurate transcripts, instant summaries, and action items with consistent quality across every call — delivered straight to your inbox, like magic.
-            </p>
-            <p style={{ color: 'var(--ink-2)', fontSize: '15px', lineHeight: 1.6 }}>
-              Every single bullet carries an exact timecode receipt chip. Click `12:41 P` to hear Priya's exact words in context.
-            </p>
-          </div>
-          <div style={{ background: '#ffffff', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px', boxShadow: '0 4px 16px rgba(15,42,51,0.06)' }}>
-            <div style={{ fontSize: '11px', fontWeight: 700, color: 'var(--ink-3)', textTransform: 'uppercase', marginBottom: '12px' }}>
-              Receipt-Backed Summary Demonstration
-            </div>
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', fontFamily: 'var(--font-prose)' }}>
-              <div>
-                • Launch usage-based tier at $19/seat with 200 query cap <ReceiptChip at={420} speakerInitial="P" />
-              </div>
-              <div>
-                • Grandfather existing enterprise contracts until Q1 renewal <ReceiptChip at={630} speakerInitial="P" />
-              </div>
-              <div>
-                • Aisha compiling 15 diarization escalation bug cases <ReceiptChip at={3140} speakerInitial="A" />
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {/* Pillar 2: Momentum (Ask Fathom) */}
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '36px', marginBottom: '32px', display: 'grid', gridTemplateColumns: '1fr 1.2fr', gap: '32px', alignItems: 'center' }}>
-          <div>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--cue)', textTransform: 'uppercase' }}>02. Momentum</span>
-            <h3 style={{ fontSize: '26px', fontWeight: 800, margin: '8px 0 12px' }}>
-              Eliminate overhead & maximize productivity
-            </h3>
-            <p style={{ color: 'var(--ink-2)', fontSize: '15px', lineHeight: 1.6, marginBottom: '16px' }}>
-              'Ask Fathom' anything about your meetings — search across conversations, spot trends, and get customizable AI summaries tailored to your team's workflow and priorities.
-            </p>
-            <Button variant="secondary" onClick={() => navigate('/meetings/mtg-q3-roadmap?tab=ask')}>
-              Try Ask AI in Flagship Meeting →
-            </Button>
-          </div>
-          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: 'var(--shadow-float)' }}>
-            <img
-              src="/images/fathom_ask_ai.jpg"
-              alt="Ask Fathom Cross-Meeting Intelligence with cited receipts and source cards"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
-          </div>
-        </div>
-
-        {/* Pillar 3: Ease (Integrations) */}
-        <div id="integrations" style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '36px', display: 'grid', gridTemplateColumns: '1.2fr 1fr', gap: '32px', alignItems: 'center' }}>
-          <div style={{ borderRadius: '12px', overflow: 'hidden', border: '1px solid var(--line)', boxShadow: 'var(--shadow-float)' }}>
-            <img
-              src="/images/fathom_integrations.jpg"
-              alt="Fathom Integrations with Slack, Salesforce, HubSpot, Zoom, Google Meet, and Notion"
-              style={{ width: '100%', height: 'auto', display: 'block' }}
-            />
-          </div>
-          <div>
-            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--cue)', textTransform: 'uppercase' }}>03. Ease</span>
-            <h3 style={{ fontSize: '26px', fontWeight: 800, margin: '8px 0 12px' }}>
-              Works wherever you do
-            </h3>
-            <p style={{ color: 'var(--ink-2)', fontSize: '15px', lineHeight: 1.6, marginBottom: '16px' }}>
-              Meeting notes, insights, and action items sync automatically with your stack — Slack, Salesforce, HubSpot, Notion, Asana, Google Meet, Zoom, and Teams — without you lifting a finger.
-            </p>
-            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap' }}>
-              <Chip variant="default">Salesforce CRM</Chip>
-              <Chip variant="default">HubSpot</Chip>
-              <Chip variant="default">Slack Channels</Chip>
-              <Chip variant="default">Notion Docs</Chip>
-              <Chip variant="default">Google Meet</Chip>
-              <Chip variant="default">Zoom Video</Chip>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* INTERACTIVE SCORE PLAYGROUND */}
-      <section style={{ maxWidth: '1100px', margin: '48px auto', padding: '0 24px', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '24px' }}>
-          <Chip variant="hl">Live Interactive Demonstration</Chip>
-          <h2 style={{ fontSize: '32px', fontWeight: 800, letterSpacing: '-0.02em', marginTop: '8px' }}>
-            Experience The Score in your browser right now
-          </h2>
-          <p style={{ color: 'var(--ink-2)', fontSize: '16px', marginTop: '4px' }}>
-            Click anywhere on the timeline or click the timecode chips to seek the 60fps audio clock.
-          </p>
-        </div>
-
-        <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', overflow: 'hidden', boxShadow: 'var(--shadow-float)' }}>
-          <div style={{ padding: '12px 20px', background: 'var(--surface-sunk)', borderBottom: '1px solid var(--line)', display: 'flex', alignItems: 'center', justifyContent: 'space-between' }}>
-            <span style={{ fontSize: '13px', fontWeight: 700 }}>
-              {demoMeeting.title} · ({formatTimecode(currentTime)} / {formatTimecode(demoMeeting.duration)})
-            </span>
-            <Button size="sm" variant="primary" onClick={() => playerRef.current?.togglePlay()}>
-              {isPlaying ? 'Pause' : 'Play Audio Clock'}
-            </Button>
-          </div>
-
-          <div style={{ padding: '16px' }}>
-            <Score
-              meeting={demoMeeting}
-              currentTime={currentTime}
-              duration={demoMeeting.duration}
-              onSeek={handleSeek}
-            />
-          </div>
-        </div>
-      </section>
-
-      {/* PRICING SECTION */}
-      <section id="pricing" style={{ maxWidth: '1000px', margin: '64px auto', padding: '0 24px', width: '100%' }}>
-        <div style={{ textAlign: 'center', marginBottom: '40px' }}>
-          <h2 style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', marginBottom: '8px' }}>
-            Straightforward, honest pricing
-          </h2>
-          <p style={{ color: 'var(--ink-2)', fontSize: '16px' }}>
-            Unlimited recordings forever. Upgrade for advanced Ask AI and priority multi-speaker diarization.
-          </p>
-        </div>
-
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '24px' }}>
-          {/* Free Tier */}
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '12px', padding: '28px', display: 'flex', flexDirection: 'column' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>Free</h3>
-            <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginBottom: '16px' }}>For individuals & ad-hoc meetings</p>
-            <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', marginBottom: '20px' }}>$0</div>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: 'var(--ink-2)', marginBottom: '28px', flex: 1 }}>
-              <li>✓ Unlimited video & audio recordings</li>
-              <li>✓ Full transcript with speaker colors</li>
-              <li>✓ Standard 60-second catch-up notes</li>
-              <li>✓ The Score timeline visualization</li>
-              <li>✓ 50 Ask AI queries per month</li>
-            </ul>
-            <Button variant="secondary" onClick={() => navigate('/onboarding')}>
-              Get Started Free
-            </Button>
-          </div>
-
-          {/* Usage-based Middle Tier */}
+    <SiteShell currentSection="product">
+      <div style={{ maxWidth: '1200px', margin: '48px auto', padding: '0 24px' }}>
+        {/* HERO SECTION */}
+        <section style={{ textAlign: 'center', marginBottom: '56px' }}>
+          {/* Eyebrow Pill */}
           <div
             style={{
-              background: '#ffffff',
-              border: '2px solid var(--cue)',
-              borderRadius: '12px',
-              padding: '28px',
-              display: 'flex',
-              flexDirection: 'column',
-              position: 'relative',
-              boxShadow: 'var(--shadow-float)',
+              display: 'inline-flex',
+              alignItems: 'center',
+              gap: '8px',
+              marginBottom: '20px',
+              background: 'var(--surface-sunk)',
+              padding: '6px 14px',
+              borderRadius: '20px',
+              border: '1px solid var(--line)',
             }}
           >
-            <div style={{ position: 'absolute', top: '-11px', left: '24px', background: 'var(--cue)', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 700 }}>
-              MOST POPULAR
-            </div>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>Team</h3>
-            <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginBottom: '16px' }}>For fast-moving product & engineering teams</p>
-            <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', marginBottom: '20px' }}>
-              $19 <span style={{ fontSize: '14px', fontWeight: 500, color: 'var(--ink-3)' }}>/ seat / mo</span>
-            </div>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: 'var(--ink)', marginBottom: '28px', flex: 1 }}>
-              <li>✓ Everything in Free</li>
-              <li>✓ <strong>200 Ask AI queries</strong> per user / month</li>
-              <li>✓ Priority 8-person multi-speaker pipeline</li>
-              <li>✓ Executive, Sales & Engineering templates</li>
-              <li>✓ Inline range clip creation & public links</li>
-              <li>✓ Google Calendar auto-join & rules builder</li>
-            </ul>
-            <Button variant="primary" onClick={() => navigate('/onboarding')}>
-              Start 14-Day Trial →
-            </Button>
+            <span style={{ width: '6px', height: '6px', borderRadius: '50%', background: 'var(--live)' }} />
+            <span style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink-2)' }}>
+              Truthful Meeting Intelligence · Every AI Bullet Has Receipts
+            </span>
           </div>
 
-          {/* Enterprise Tier */}
-          <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '12px', padding: '28px', display: 'flex', flexDirection: 'column' }}>
-            <h3 style={{ fontSize: '20px', fontWeight: 700, marginBottom: '4px' }}>Enterprise</h3>
-            <p style={{ fontSize: '13px', color: 'var(--ink-3)', marginBottom: '16px' }}>For regulated & large organizations</p>
-            <div style={{ fontSize: '36px', fontWeight: 800, color: 'var(--ink)', marginBottom: '20px' }}>Custom</div>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '10px', fontSize: '14px', color: 'var(--ink-2)', marginBottom: '28px', flex: 1 }}>
-              <li>✓ 50-seat minimum commitment</li>
-              <li>✓ SAML SSO & SCIM directory sync</li>
-              <li>✓ Granular sharing permissions & audit logs</li>
-              <li>✓ Dedicated customer success manager</li>
-              <li>✓ Custom AI summary templates & SLA</li>
-            </ul>
-            <Button variant="secondary" onClick={() => navigate('/onboarding')}>
-              Contact Sales
-            </Button>
-          </div>
-        </div>
-      </section>
+          <h1
+            style={{
+              fontSize: '52px',
+              fontWeight: 800,
+              lineHeight: 1.1,
+              letterSpacing: '-0.03em',
+              color: 'var(--ink)',
+              marginBottom: '20px',
+              maxWidth: '920px',
+              marginLeft: 'auto',
+              marginRight: 'auto',
+            }}
+          >
+            Never take notes again. Verified summaries with clickable receipts.
+          </h1>
 
-      {/* FOOTER */}
-      <footer style={{ marginTop: 'auto', borderTop: '1px solid var(--line)', padding: '48px 32px 32px', background: 'var(--surface)' }}>
-        <div style={{ maxWidth: '1100px', margin: '0 auto', display: 'grid', gridTemplateColumns: '2fr 1fr 1fr 1fr', gap: '32px', marginBottom: '32px' }}>
-          <div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
-              <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: 'var(--live)' }} />
-              <span style={{ fontWeight: 800, fontSize: '18px', color: 'var(--ink)' }}>FATHOM</span>
+          <p
+            style={{
+              fontSize: '20px',
+              color: 'var(--ink-2)',
+              maxWidth: '740px',
+              margin: '0 auto 32px',
+              lineHeight: 1.5,
+            }}
+          >
+            Fathom eliminates manual note-taking and CRM hygiene debt. Verbatim transcripts, 8-lane speaker timelines, and summaries that jump directly to spoken seconds. Now available bot-free.
+          </p>
+
+          {/* CTA #1 OF 3 */}
+          <div style={{ display: 'flex', justifyContent: 'center', gap: '16px', marginBottom: '48px' }}>
+            <Button size="lg" variant="primary" onClick={() => navigate('/onboarding')} style={{ padding: '0 32px', height: '48px', fontSize: '16px' }}>
+              Get Started Free — No Credit Card
+            </Button>
+            <Link to="/meetings/mtg-q3-roadmap">
+              <Button size="lg" variant="secondary" style={{ height: '48px' }}>
+                Open 8-Person Live Demo
+              </Button>
+            </Link>
+          </div>
+
+          {/* HERO PLAYABLE MINI MEETING FIXTURE (REAL COMPONENTS, NOT A PICTURE!) */}
+          <div
+            style={{
+              background: 'var(--surface)',
+              border: '1px solid var(--line)',
+              borderRadius: '16px',
+              overflow: 'hidden',
+              boxShadow: 'var(--shadow-float)',
+              textAlign: 'left',
+            }}
+          >
+            {/* Fixture Player Top Bar */}
+            <div
+              style={{
+                padding: '14px 24px',
+                background: 'var(--surface-sunk)',
+                borderBottom: '1px solid var(--line)',
+                display: 'flex',
+                alignItems: 'center',
+                justifyContent: 'space-between',
+                flexWrap: 'wrap',
+                gap: '12px',
+              }}
+            >
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <span style={{ width: '8px', height: '8px', borderRadius: '50%', background: isPlaying ? 'var(--live)' : 'var(--cue)' }} />
+                <span style={{ fontSize: '14px', fontWeight: 700, color: 'var(--ink)' }}>
+                  {demoMeeting.title}
+                </span>
+                <span style={{ fontSize: '12px', color: 'var(--ink-3)', fontFamily: 'monospace' }}>
+                  ({formatTimecode(currentTime)} / {formatTimecode(demoMeeting.duration)})
+                </span>
+              </div>
+
+              <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
+                <Button
+                  size="sm"
+                  variant={isPlaying ? 'secondary' : 'primary'}
+                  onClick={() => playerRef.current?.togglePlay()}
+                >
+                  {isPlaying ? 'Pause Playhead' : 'Play 60fps Audio Clock'}
+                </Button>
+                <Link to="/meetings/mtg-q3-roadmap">
+                  <Button size="sm" variant="ghost">Full Screen App →</Button>
+                </Link>
+              </div>
             </div>
-            <p style={{ fontSize: '14px', color: 'var(--ink-2)', lineHeight: 1.5, maxWidth: '280px' }}>
-              Meeting notes that show their work. Every line links to the moment it came from.
+
+            {/* The Score Timeline Track */}
+            <div style={{ padding: '20px 24px 16px', background: 'var(--canvas)' }}>
+              <div style={{ fontSize: '11px', fontWeight: 800, color: 'var(--ink-3)', textTransform: 'uppercase', letterSpacing: '0.04em', marginBottom: '8px' }}>
+                The Score: 8 Dedicated Speaker Lanes · Click to Seek Playhead
+              </div>
+              <Score
+                meeting={demoMeeting}
+                currentTime={currentTime}
+                duration={demoMeeting.duration}
+                onSeek={handleSeek}
+              />
+            </div>
+
+            {/* Receipt-Backed Takeaway Strip */}
+            <div style={{ padding: '20px 24px', background: 'var(--surface)', borderTop: '1px solid var(--line)', display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '16px' }}>
+              <div style={{ background: 'var(--surface-sunk)', padding: '14px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '13px' }}>
+                <div style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--ink)' }}>Commercial Milestone</div>
+                <div>
+                  • Launch usage-based tier at $19/seat with 200 query cap{' '}
+                  <ReceiptChip at={420} speakerInitial="P" />
+                </div>
+              </div>
+              <div style={{ background: 'var(--surface-sunk)', padding: '14px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '13px' }}>
+                <div style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--ink)' }}>Assigned Action Item</div>
+                <div>
+                  • Deliver custom SOC2 compliance package by Thursday{' '}
+                  <ReceiptChip at={2680} speakerInitial="A" />
+                </div>
+              </div>
+              <div style={{ background: 'var(--surface-sunk)', padding: '14px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '13px' }}>
+                <div style={{ fontWeight: 700, marginBottom: '4px', color: 'var(--ink)' }}>Engineering Architecture</div>
+                <div>
+                  • Sub-50ms diarization boundary snapping across 8 lanes{' '}
+                  <ReceiptChip at={710} speakerInitial="A" />
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 2: CAPTURE-MODE SELECTOR (BOT VS BOT-FREE) */}
+        <section style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', marginBottom: '56px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <Chip variant="cue">Capture Ergonomics</Chip>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginTop: '8px', marginBottom: '8px' }}>
+              Choose how you record: Bot or Bot-Free
+            </h2>
+            <p style={{ color: 'var(--ink-2)', fontSize: '16px', maxWidth: '640px', margin: '0 auto' }}>
+              Switch modes below to see how Fathoms output adapts to your meeting sensitivity requirements.
+            </p>
+
+            <div style={{ display: 'inline-flex', gap: '8px', background: 'var(--surface-sunk)', padding: '4px', borderRadius: '8px', marginTop: '16px' }}>
+              <button
+                onClick={() => setCaptureMode('bot_free')}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: captureMode === 'bot_free' ? 'var(--ink)' : 'transparent',
+                  color: captureMode === 'bot_free' ? '#ffffff' : 'var(--ink-2)',
+                }}
+              >
+                Local Desktop (Bot-Free)
+              </button>
+              <button
+                onClick={() => setCaptureMode('bot')}
+                style={{
+                  padding: '8px 20px',
+                  borderRadius: '6px',
+                  fontSize: '14px',
+                  fontWeight: 700,
+                  border: 'none',
+                  cursor: 'pointer',
+                  background: captureMode === 'bot' ? 'var(--ink)' : 'transparent',
+                  color: captureMode === 'bot' ? '#ffffff' : 'var(--ink-2)',
+                }}
+              >
+                Automated Cloud Bot
+              </button>
+            </div>
+          </div>
+
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '32px', alignItems: 'center' }}>
+            <div>
+              <h3 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '12px' }}>
+                {captureMode === 'bot_free'
+                  ? 'Total Discretion: No Bot Avatar in Your Video Grid'
+                  : 'Automated Cloud Convenience: Zero Software to Install'}
+              </h3>
+              <p style={{ color: 'var(--ink-2)', fontSize: '15px', lineHeight: 1.6, marginBottom: '16px' }}>
+                {captureMode === 'bot_free'
+                  ? 'Captures system audio locally from your operating system audio pipeline. Ideal for sensitive client calls, executive interviews, or strict organizational policies where external bot avatars are prohibited.'
+                  : 'A dedicated Fathom Notetaker joins your scheduled Zoom, Google Meet, or Teams conference room automatically. Perfect for team transparency where participants appreciate clear visual recording indicators.'}
+              </p>
+              <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--ink-2)' }}>
+                <li>✓ Full 8-track speaker diarization supported</li>
+                <li>✓ Clickable timecode receipts on all bullet points</li>
+                <li>✓ Automatic CRM sync to Salesforce and HubSpot</li>
+              </ul>
+            </div>
+
+            <div style={{ background: 'var(--surface-sunk)', border: '1px solid var(--line)', borderRadius: '12px', padding: '24px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '16px' }}>
+                <span style={{ fontSize: '12px', fontWeight: 800, textTransform: 'uppercase', color: 'var(--ink-3)' }}>
+                  Live Mode Payload Status
+                </span>
+                <Chip variant={captureMode === 'bot_free' ? 'ok' : 'cue'}>
+                  {captureMode === 'bot_free' ? 'Bot-Free Desktop Active' : 'Cloud Bot Active'}
+                </Chip>
+              </div>
+
+              <div style={{ background: '#ffffff', padding: '16px', borderRadius: '8px', border: '1px solid var(--line)', fontSize: '13px' }}>
+                <div><strong>Capture Mode:</strong> {captureMode === 'bot_free' ? 'Local CoreAudio Loopback' : 'WebRTC Room Peer'}</div>
+                <div style={{ marginTop: '6px' }}><strong>Room Avatar Presence:</strong> {captureMode === 'bot_free' ? 'None (Invisible to participants)' : 'Visible ("Fathom Notetaker")'}</div>
+                <div style={{ marginTop: '6px' }}><strong>Diarization Latency:</strong> Sub-50ms streaming</div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 3: ASK FATHOM WITH RECEIPTS */}
+        <section style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', marginBottom: '56px' }}>
+          <div style={{ maxWidth: '800px', margin: '0 auto 32px', textAlign: 'center' }}>
+            <Chip variant="cue">Cross-Meeting Intelligence</Chip>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginTop: '8px', marginBottom: '8px' }}>
+              Ask anything. Every answer cites exact spoken receipts.
+            </h2>
+            <p style={{ color: 'var(--ink-2)', fontSize: '16px' }}>
+              Query across your conversations. No hallucinated claims — only cited facts linked to timecodes.
             </p>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px' }}>Solutions</h4>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--ink-2)' }}>
-              <li><Link to="/meetings">For Sales</Link></li>
-              <li><Link to="/meetings">For Customer Success</Link></li>
-              <li><Link to="/meetings">For Product & Design</Link></li>
-              <li><Link to="/meetings">For Teams</Link></li>
-            </ul>
+          <div style={{ maxWidth: '840px', margin: '0 auto' }}>
+            {/* Query Buttons */}
+            <div style={{ display: 'flex', gap: '8px', flexWrap: 'wrap', marginBottom: '16px' }}>
+              {[
+                'What pricing model and per-seat fee was approved during this meeting?',
+                'Who was assigned the SOC2 compliance packet and what is the deadline?',
+                'What competitor was mentioned regarding contract renewal?',
+              ].map((q) => (
+                <button
+                  key={q}
+                  onClick={() => setActiveQuestion(q)}
+                  style={{
+                    padding: '8px 14px',
+                    borderRadius: '20px',
+                    fontSize: '12px',
+                    fontWeight: 600,
+                    cursor: 'pointer',
+                    border: activeQuestion === q ? '1px solid var(--ink)' : '1px solid var(--line)',
+                    background: activeQuestion === q ? 'var(--ink)' : 'var(--surface-sunk)',
+                    color: activeQuestion === q ? '#ffffff' : 'var(--ink-2)',
+                  }}
+                >
+                  {q}
+                </button>
+              ))}
+            </div>
+
+            {/* Answer Card with Live Receipt */}
+            <div style={{ background: 'var(--surface-sunk)', border: '1px solid var(--line)', borderRadius: '12px', padding: '24px' }}>
+              <div style={{ fontSize: '12px', fontWeight: 700, color: 'var(--ink-3)', marginBottom: '8px' }}>
+                Cited AI Answer:
+              </div>
+              <div style={{ fontSize: '16px', lineHeight: 1.6, color: 'var(--ink)', marginBottom: '16px' }}>
+                {activeQuestion.includes('pricing') ? (
+                  <>
+                    Priya proposed and confirmed launching the usage-based tier at <strong>$19 per seat</strong> with a 200 query cap, while grandfathering existing enterprise agreements until Q1 renewal.{' '}
+                    <ReceiptChip at={420} speakerInitial="P" />
+                  </>
+                ) : activeQuestion.includes('SOC2') ? (
+                  <>
+                    Alex was assigned to deliver the custom SOC2 compliance package and DPA by <strong>Thursday end of day</strong> to Marcus for infosec review.{' '}
+                    <ReceiptChip at={2680} speakerInitial="A" />
+                  </>
+                ) : (
+                  <>
+                    Marcus mentioned that their legacy contract with <strong>Fireflies</strong> expires on November 15th, requesting migration support.{' '}
+                    <ReceiptChip at={2190} speakerInitial="M" />
+                  </>
+                )}
+              </div>
+              <div style={{ fontSize: '12px', color: 'var(--ink-3)' }}>
+                Source: <em>Q3 Product Roadmap Review · Sep 24, 2026</em>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 4: WHERE NOTES GO (REAL PAYLOAD PREVIEWS INSTEAD OF LOGO ROWS!) */}
+        <section style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', marginBottom: '56px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <Chip variant="cue">Real Automations, Not Logo Rows</Chip>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginTop: '8px', marginBottom: '8px' }}>
+              Where your notes actually go: Automated CRM & Workspace payloads
+            </h2>
+            <p style={{ color: 'var(--ink-2)', fontSize: '16px', maxWidth: '680px', margin: '0 auto' }}>
+              We don't just show partner icons. Inspect the actual structured JSON emitted to Salesforce, HubSpot, and Slack when meetings end.
+            </p>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px' }}>Integrations</h4>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--ink-2)' }}>
-              <li><span>Zoom Video</span></li>
-              <li><span>Google Meet</span></li>
-              <li><span>Microsoft Teams</span></li>
-              <li><span>Slack & Salesforce</span></li>
-            </ul>
+          <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(320px, 1fr))', gap: '24px' }}>
+            {/* Payload 1: Salesforce */}
+            <div style={{ background: 'var(--canvas)', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ background: '#00A1E0', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 800 }}>SF</span>
+                <strong style={{ fontSize: '14px' }}>Salesforce Opportunity Sync</strong>
+              </div>
+              <pre style={{ background: '#1A202C', color: '#68D391', padding: '14px', borderRadius: '8px', fontSize: '12px', margin: 0, overflowX: 'auto', fontFamily: 'monospace' }}>
+{`{
+  "task": "Call Recap & Next Steps",
+  "opportunity_id": "0065e000002XYZ1",
+  "meddic_budget": "$65k confirmed",
+  "next_step": "Send SOC2 DPA packet",
+  "receipt_url": "fathom.ai/mtg?t=420"
+}`}
+              </pre>
+            </div>
+
+            {/* Payload 2: HubSpot */}
+            <div style={{ background: 'var(--canvas)', border: '1px solid var(--line)', borderRadius: '12px', padding: '20px' }}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '8px', marginBottom: '12px' }}>
+                <span style={{ background: '#FF7A59', color: '#ffffff', padding: '2px 8px', borderRadius: '4px', fontSize: '11px', fontWeight: 800 }}>HS</span>
+                <strong style={{ fontSize: '14px' }}>HubSpot Timeline Engagement</strong>
+              </div>
+              <pre style={{ background: '#1A202C', color: '#68D391', padding: '14px', borderRadius: '8px', fontSize: '12px', margin: 0, overflowX: 'auto', fontFamily: 'monospace' }}>
+{`{
+  "deal_stage": "Proposal Scoping",
+  "attendees": ["Marcus", "Priya"],
+  "expansion_signal": "+45 seats Q4",
+  "health_score": "Green",
+  "receipt_url": "fathom.ai/mtg?t=620"
+}`}
+              </pre>
+            </div>
+          </div>
+        </section>
+
+        {/* SECTION 5: ROLE SWITCHER */}
+        <section style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: '16px', padding: '40px', marginBottom: '56px' }}>
+          <div style={{ textAlign: 'center', marginBottom: '32px' }}>
+            <Chip variant="cue">Role Solutions</Chip>
+            <h2 style={{ fontSize: '32px', fontWeight: 800, marginTop: '8px', marginBottom: '8px' }}>
+              Engineered for how your specific team works
+            </h2>
+            <div style={{ display: 'inline-flex', gap: '8px', background: 'var(--surface-sunk)', padding: '4px', borderRadius: '8px', marginTop: '12px' }}>
+              {(['sales', 'customer-success', 'teams'] as const).map((rKey) => (
+                <button
+                  key={rKey}
+                  onClick={() => setSelectedRole(rKey)}
+                  style={{
+                    padding: '8px 18px',
+                    borderRadius: '6px',
+                    fontSize: '13px',
+                    fontWeight: 700,
+                    border: 'none',
+                    cursor: 'pointer',
+                    background: selectedRole === rKey ? 'var(--ink)' : 'transparent',
+                    color: selectedRole === rKey ? '#ffffff' : 'var(--ink-2)',
+                  }}
+                >
+                  {ROLE_SOLUTIONS[rKey].roleName}
+                </button>
+              ))}
+            </div>
           </div>
 
-          <div>
-            <h4 style={{ fontSize: '13px', fontWeight: 700, textTransform: 'uppercase', marginBottom: '12px' }}>Product</h4>
-            <ul style={{ display: 'flex', flexDirection: 'column', gap: '8px', fontSize: '14px', color: 'var(--ink-2)' }}>
-              <li><Link to="/onboarding">Sign Up Free</Link></li>
-              <li><Link to="/meetings/mtg-q3-roadmap">Flagship Demo</Link></li>
-              <li><Link to="/live">Live Simulation</Link></li>
-              <li><Link to="/dev/design">Design Gallery</Link></li>
-            </ul>
+          <div style={{ background: 'var(--surface-sunk)', borderRadius: '12px', padding: '28px', border: '1px solid var(--line)' }}>
+            <h3 style={{ fontSize: '22px', fontWeight: 800, marginBottom: '8px' }}>{currentRoleData.headline}</h3>
+            <p style={{ color: 'var(--ink-2)', fontSize: '15px', marginBottom: '20px' }}>{currentRoleData.subheadline}</p>
+            <div style={{ display: 'flex', gap: '12px' }}>
+              <Link to={`/solutions/${selectedRole}`}>
+                <Button variant="primary">Explore {currentRoleData.roleName} Solution →</Button>
+              </Link>
+            </div>
           </div>
+        </section>
+
+        {/* SECTION 6: PRICING TEASER */}
+        <section style={{ background: 'var(--surface-sunk)', border: '1px solid var(--line)', borderRadius: '16px', padding: '48px 32px', textAlign: 'center', marginBottom: '56px' }}>
+          <Chip variant="default">Sample Pricing Teaser</Chip>
+          <h2 style={{ fontSize: '32px', fontWeight: 800, marginTop: '12px', marginBottom: '8px' }}>
+            Free Forever. Upgrade when you need team CRM sync.
+          </h2>
+          <p style={{ color: 'var(--ink-2)', fontSize: '16px', maxWidth: '600px', margin: '0 auto 24px' }}>
+            Unlimited recordings and verbatim transcripts cost $0. Team Edition is $19/seat with custom templates and CRM sync.
+          </p>
+          <Link to="/pricing">
+            <Button variant="secondary" size="md">Compare All Features & Limits →</Button>
+          </Link>
+        </section>
+
+        {/* BOTTOM FINAL CTA (#3 OF 3) */}
+        <div style={{ textAlign: 'center', padding: '48px 24px', background: 'var(--ink)', borderRadius: '16px', color: '#ffffff' }}>
+          <h2 style={{ fontSize: '36px', fontWeight: 800, marginBottom: '12px' }}>
+            Stop taking notes. Start focusing on the conversation.
+          </h2>
+          <p style={{ color: 'var(--ink-3)', fontSize: '16px', maxWidth: '600px', margin: '0 auto 28px' }}>
+            Join hundreds of thousands of professionals who rely on Fathom every day for truthful meeting notes.
+          </p>
+          <Button size="lg" variant="primary" onClick={() => navigate('/onboarding')} style={{ padding: '0 32px', height: '48px', fontSize: '16px' }}>
+            Get Started Free — Takes 30 Seconds
+          </Button>
         </div>
-
-        <div style={{ maxWidth: '1100px', margin: '0 auto', paddingTop: '24px', borderTop: '1px solid var(--line)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', fontSize: '12px', color: 'var(--ink-3)' }}>
-          <span>© 2026 Fathom (rebuild). All rights reserved. SOC 2 Type II Certified · GDPR Compliant.</span>
-          <span>Broadcast edit-suite productivity & receipt-backed trust.</span>
-        </div>
-      </footer>
-    </div>
+      </div>
+    </SiteShell>
   );
 };

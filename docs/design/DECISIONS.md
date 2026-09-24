@@ -45,3 +45,44 @@ Built `/live` simulation mode featuring live tally REC indicator, streaming turn
 ### D013: Public clip page `/s/:token` without auth
 Shared links and clips render in a responsive, phone-first standalone view without requiring an account or login wall.
 
+---
+
+## 2026-09-25 (Master Prompt v2 Rebuild)
+
+### D014: Master Prompt v2 Strategy — 17 Templates Fed by Typed Content Layer
+Rather than authoring 90+ monolithic JSX pages, designed 17 parameterized templates (`Landing`, `Story`, `Pricing`, `RoleSolution`, `IntegrationsDirectory`, `IntegrationDetail`, `Comparison`, `Changelog`, `ResourceHub`, `Article`, `Developers`, `Help`, `Trust`, `Status`, `Company`, `Legal`, `Forms`, `Careers`, `PartnerPrograms`) driven by a type-safe content layer in `src/content/`. This guarantees design uniformity, high speed of evolution, and maintainability.
+
+### D015: Parity Board & Route Manifest as Contract (`src/routes/manifest.ts`)
+Created `src/routes/manifest.ts` mapping all 80 original Fathom routes with template type, tier, original URL, SEO metadata, and verification status. Exposed an interactive ledger at `/dev/parity` enabling quick inspection of coverage, tiers, and parity mapping.
+
+### D016: Unified SiteShell Across All External Domains
+Replaced the original Fathom fragmentation (which spanned 6+ disjoint domains with mismatched navigation) with a single unified `SiteShell` featuring a 5-item top navigation, dismissible release banner, responsive mobile drawer, and 6-column comprehensive footer across marketing, docs, help, trust, and status.
+
+### D017: Universal ⌘K Search Across All Content Domains
+Implemented `GlobalSearchModal` operating across pages, integrations, help articles, API documentation, and changelog updates with keyboard navigation, section groupings, and instant search filtering.
+
+### D018: Neutral Monogram Tiles for Third-Party Integrations
+To avoid trademark disputes or stale assets, implemented clean neutral monogram tiles with semantic brand tints for all 21 integration partners rather than raster logos.
+
+### D019: Receipts Principle in Marketing & Product
+Extended the receipts principle beyond transcripts into marketing and role pages. Role solutions (`/solutions/:role`) showcase live interactive summaries citing concrete timecodes, and comparisons (`/vs/:slug`) feature "show only differences" toggles, verifiable feature matrices, and explicit as-of timestamps.
+
+### D020: Strict "Sample" Labeling Policy
+In adherence to the honesty rules, all non-verified figures, customer quotes, ROI calculations, SOC2 attestations, and pricing figures are explicitly badged with a "Sample" chip in the UI to prevent any misleading assertions.
+
+### D021: Client-Side Interactive Plan Finder on Pricing Page
+Built a 3-question guided diagnostic ("Team size", "CRM integration", "Monthly meeting volume") recommending Free, Team, or Business editions dynamically with exact limits and transparent pricing, eliminating ambiguous "Limited use" descriptions.
+
+### D022: Three-Pane Developer Documentation with Multi-Language Code Snippets
+Built `/developers/*` as a three-pane doc layout (sidebar navigation, documentation content, on-this-page sticky TOC) with 12+ REST endpoints, interactive copy-to-clipboard curl/TypeScript/Python snippets, webhooks schemas, MCP guide, and an `llms.txt` viewer.
+
+### D023: Tier B Advanced App Suites on Seeded Data
+Extended the product app with Tier B capabilities on real meeting fixtures:
+- `/app/templates`: 12-template library and live interactive prompt builder.
+- `/app/deals`: Pipeline deal timeline with MEDDIC qualifiers and timecode citations.
+- `/app/scorecards`: Objective evaluation rubric with timestamped evidence receipts.
+- `/app/trackers`: Natural language alert phrase builder and notification matches.
+- `/app/highlights`: Curated clip reels shareable as a single unified link.
+- `/app/analytics`: Team-wide talk ratio, monologue duration, and trend metrics calculated directly from segment data.
+- `/app/points`: Referral program dashboard and perks store.
+

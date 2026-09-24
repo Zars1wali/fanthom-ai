@@ -124,6 +124,13 @@
   letter-spacing: 0.04em;
 }
 
+.chip-ok {
+  background: #e6f4ea;
+  color: var(--ok);
+  border-color: rgba(43, 138, 62, 0.25);
+  font-weight: 600;
+}
+
 /* ── Receipt Chip ────────────────────────────────────── */
 .receipt-chip {
   display: inline-flex;

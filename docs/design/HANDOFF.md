@@ -60,6 +60,81 @@
 
 ---
 
+### Master Prompt v2 Rebuilt Routes
+
+#### `/` — Landing Page (Interactive Hero Fixture)
+- **Interactive Fixture**: Real, interactive meeting player running on a sample 58-minute roadmap call.
+- **Capture-Mode Selector**: Toggle between Bot-Free Native Audio and Cloud Bot mode with instant feedback.
+- **Ask with Receipts**: Interactive prompt suggestions outputting token-streamed answers with timestamp chips.
+- **Payload Preview**: Live JSON payload inspection showing CRM integration schema.
+
+#### `/overview` — Story Lifecycle
+- **4-Phase Narrative**: Before the Call (prep & context), During (invisible capture & hotkey highlights), After (instant structured summaries with receipts), and Later (enterprise search & deals).
+
+#### `/pricing` — Transparent Pricing & Plan Finder
+- **3 Tiers**: Free ($0), Team ($19/mo), and Enterprise ($39/mo, 50-seat minimum).
+- **Plan Finder**: 3-question guided diagnostic recommending the right tier dynamically.
+- **Sticky Feature Matrix**: Grouped accordions comparing capture, intelligence, CRM sync, and security with exact limits.
+
+#### `/solutions/:role` — Role Solutions (6 Roles)
+- Dedicated solution pages for `Sales`, `Customer Success`, `Marketing`, `Teams`, `Operations`, and `Engineering`.
+- Each renders an interactive summary showpiece, 3 saved prompts, and workflow integrations.
+
+#### `/integrations` & `/integrations/:slug` — Directory & 21 Detail Pages
+- **Instant Filtering**: Category tabs (`All`, `CRM`, `Project Management`, `Workflow Automation`, `Video Conferencing`, `Collaboration`, `Sales Intelligence`) and plan filters.
+- **Neutral Monogram Badges**: High-contrast, brand-tinted monogram tiles for all 21 integrations.
+- **3-Step Setup & JSON Payloads**: Practical setup steps, required OAuth scopes, and sample webhook payloads.
+
+#### `/whats-new` — Changelog
+- 12 dated releases across `Capture`, `AI & Summaries`, and `Integrations` with interactive "Try in App" links.
+
+#### `/vs` & `/vs/:slug` — Competitor Comparisons (8 Competitors)
+- Objective comparisons against Fireflies, Granola, Gong, Otter, Read AI, Zoom AI, Google Meet, and Built-In Notes.
+- Interactive "Show only differences" toggle, migration steps, and "as of" timestamp notices.
+
+#### `/resource-hub` & `/learn/:slug` — Guides & Playbooks
+- 4 long-form playbooks (600+ words each) with reading progress bars, sticky TOC, and related guides.
+- 3 sample customer case studies (`Blackthorn`, `Bluleadz`, `NCSI`) explicitly labeled "Sample story".
+
+#### `/developers/*` — 3-Pane Developer Documentation
+- **API Reference**: 12+ REST endpoints with multi-language curl/TypeScript/Python snippets and instant copy-to-clipboard.
+- **Webhooks & MCP**: Webhook event schemas, Model Context Protocol integration guide, and `llms.txt`.
+
+#### `/help/*` — Unified Help Center
+- 9 original categories, 18+ comprehensive articles, real-time search with highlighted matches, and a designed contact support form.
+
+#### `/trust` — Security & Trust Center
+- Security architecture overview, data retention policies, third-party subprocessors table, and report request form. Sample compliance notice.
+
+#### `/status` — System Status & Incident Log
+- 6 infrastructure components with 90-day uptime bars, historical incident logs, and subscription modal.
+
+#### `/about-us` & `/brand` — Company & Brand Materials
+- Mission statement, core values (no lorem ipsum), boilerplate, and downloadable SVG logo pack.
+
+#### `/terms` & `/privacy` — Legal Terms & Privacy
+- Full legal structures with sticky TOC, last-updated stamps, print stylesheets, and sample legal disclaimer.
+
+#### `/signup`, `/login`, `/book-demo`, `/switch` — Forms & Onboarding
+- Designed accessible forms with inline validation and seamless transition into the live app.
+
+#### `/careers` & `/careers/:role` — Careers Hub
+- 3 open roles across Engineering, Product Design, and Solutions with an accessible application modal.
+
+#### `/partner-programs` & `/program/:slug` — Partner Ecosystem
+- Overviews and application forms for Solutions Partners, Tech Integrators, Points Program, and Portfolio Partners.
+
+#### Tier B App Breadth:
+- `/app/templates`: 12-template library with interactive builder and preview.
+- `/app/deals`: Pipeline deal timeline with MEDDIC qualifiers and timecode receipts.
+- `/app/scorecards`: Call scoring rubric with cited evidence.
+- `/app/trackers`: Natural language alert phrase builder and notification matches.
+- `/app/highlights`: Ordered clip reels shareable as a single link.
+- `/app/analytics`: Team-wide talk ratio, monologue duration, and trend metrics.
+- `/app/points`: Referral program dashboard and perks store.
+- `/dev/parity`: Live parity verification ledger mapping all 80 original routes.
+
+
 ## 2. Precise Task List for Backend Agent
 
 The front-end code reads and writes data exclusively through the `MeetingRepo` interface in `src/data/repo.ts`. To replace `MockMeetingRepo` with a production backend:

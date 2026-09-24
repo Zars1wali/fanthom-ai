@@ -48,7 +48,16 @@
 
 ---
 
-### [4:15 – 4:45] Conclusion & Next Steps
-- "Finally, our `/live` simulation shows how real-time audio streams into our pipeline, auto-stamps scratchpad notes, and outputs chaptered notes.
-- If we had another 24 hours, we'd hook up real Google Calendar OAuth and plug in Recall.ai bot capture.
+### [4:15 – 4:45] Parity Board & Coverage Proof
+- *Screen share on `http://localhost:5173/dev/parity`*
+- "Next, let's look at the **Parity Board** at `/dev/parity`.
+- We've mapped all 80 routes from the original Fathom domain and external hubs (Help Center, Developer Docs, Trust Center, Status Page, Legal, Roles, Competitor comparisons, and Partner programs) into 17 high-craft templates fed by a typed content layer.
+- Everything lives on one unified origin with zero external fragmentation and a shared ⌘K global search.
+- Any visitor or stakeholder can click on any row in the parity table to immediately inspect the rebuilt, superior equivalent with live fixtures, honest sample labeling, and exact pricing limits."
+
+---
+
+### [4:45 – 5:00] Conclusion & Architecture
+- "Finally, our `/live` simulation and advanced app modules (`/app/templates`, `/app/deals`, `/app/scorecards`, `/app/trackers`) demonstrate how real-time audio streams into our pipeline, auto-stamps scratchpad notes, and powers sales intelligence with receipts.
+- All code passes clean route-check crawls and compiles with zero TypeScript errors.
 - Thank you — every line links to the moment it came from."

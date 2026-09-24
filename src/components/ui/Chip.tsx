@@ -2,7 +2,7 @@ import React from 'react';
 import './ui.css';
 
 export interface ChipProps extends React.HTMLAttributes<HTMLSpanElement> {
-  variant?: 'default' | 'cue' | 'hl' | 'live';
+  variant?: 'default' | 'cue' | 'hl' | 'live' | 'ok';
   icon?: React.ReactNode;
 }
 

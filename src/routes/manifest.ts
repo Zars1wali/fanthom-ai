@@ -775,4 +775,14 @@ export const ROUTE_MANIFEST: RouteManifestEntry[] = [
     description: 'Personal referral link, rewards balance, and sample perks catalog.',
     status: 'built',
   },
+  {
+    path: '/calendar',
+    template: 'App',
+    tier: 1,
+    originalUrl: 'https://app.fathom.video/calendar',
+    title: 'Calendar Integration & Recording Rules | Fathom App',
+    description: 'Connected calendar schedule, upcoming meetings, attendee domain classification, and per-meeting recording toggles.',
+    status: 'verified',
+    notes: 'Interactive calendar view connected to backend API with live record switches.',
+  },
 ];

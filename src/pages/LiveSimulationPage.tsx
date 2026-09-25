@@ -1,9 +1,14 @@
 import React, { useState, useEffect, useRef } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import { Button, Chip, Kbd, formatTimecode, useToast } from '../components/ui';
 
 export const LiveSimulationPage: React.FC = () => {
-  const [meetingUrl, setMeetingUrl] = useState('https://meet.google.com/abc-xyz-123');
+  const [searchParams] = useSearchParams();
+  const initialUrl = searchParams.get('url') || 'https://meet.google.com/abc-xyz-123';
+  const initialTitle = searchParams.get('title') || '2-Minute Self-Test Call';
+
+  const [meetingUrl, setMeetingUrl] = useState(initialUrl);
+  const [meetingTitle, setMeetingTitle] = useState(initialTitle);
   const [isRecording, setIsRecording] = useState(false);
   const [elapsed, setElapsed] = useState(0);
   const [notes, setNotes] = useState<string>('');
@@ -15,10 +20,11 @@ export const LiveSimulationPage: React.FC = () => {
   const timerRef = useRef<number | null>(null);
 
   const scriptedDialogue = [
+    { speaker: 'You', text: "Starting a quick 2-minute recording check to test audio diarization and action item extraction.", colorIndex: 3 },
     { speaker: 'Priya Sharma', text: "Let's review the customer feedback on the 60-minute calls before we touch the roadmap.", colorIndex: 1 },
     { speaker: 'Marcus Chen', text: "Engineering found that diarization accuracy drops after turn 400 when speakers overlap.", colorIndex: 2 },
-    { speaker: 'You', text: "We need to fix that before launching the usage-based tier next month.", colorIndex: 3 },
-    { speaker: 'Aisha Okonkwo', text: "Customer success has 15 tagged bug reports ready for review.", colorIndex: 4 },
+    { speaker: 'You', text: "We need to fix that before launching the usage-based tier next month. I will document the test cases.", colorIndex: 3 },
+    { speaker: 'Aisha Okonkwo', text: "Customer success has 15 tagged bug reports ready for review. I'll send them over by 4 PM.", colorIndex: 4 },
   ];
 
   // Call timer and live stream simulation
@@ -68,24 +74,68 @@ export const LiveSimulationPage: React.FC = () => {
     }
   };
 
-  const handleEndCall = () => {
+  const handleEndCall = async () => {
     setIsRecording(false);
     setStage('processing');
 
-    setProcessStep('Transcribing audio turns…');
+    setProcessStep('1/4 Normalising audio turns & computing speaker talk-time…');
+
+    try {
+      const turnsToProcess = turns.length > 0 ? turns : scriptedDialogue.map((d, i) => ({ ...d, time: i * 15 }));
+      const rawSegments = turnsToProcess.map((t, idx) => ({
+        speakerName: t.speaker,
+        start: idx * 12,
+        end: (idx + 1) * 12,
+        text: t.text,
+      }));
+
+      const res = await fetch('/api/pipeline/process', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          title: meetingTitle || '2-Minute Self-Test Call',
+          rawSegments,
+          templateId: 'standard',
+          platform: 'meet',
+        }),
+      });
+
+      if (res.ok) {
+        const newMtg = await res.json();
+        setProcessStep('2/4 Segmenting chapters & detecting topic boundaries…');
+        setTimeout(() => {
+          setProcessStep('3/4 Generating summary with timecode receipts…');
+          setTimeout(() => {
+            setProcessStep('4/4 Extracting action items & indexing for ⌘K search…');
+            setTimeout(() => {
+              setStage('done');
+              toast({ message: 'Meeting ready with receipts! Opening…' });
+              setTimeout(() => {
+                navigate(`/meetings/${newMtg.id}`);
+              }, 700);
+            }, 700);
+          }, 700);
+        }, 700);
+        return;
+      }
+    } catch (e) {
+      console.warn('Pipeline process error, using fallback:', e);
+    }
+
+    // Graceful fallback to flagship roadmap meeting
     setTimeout(() => {
       setProcessStep('Segmenting chapters & detecting topic boundaries…');
       setTimeout(() => {
         setProcessStep('Summarizing with receipts and extracting action items…');
         setTimeout(() => {
           setStage('done');
-          toast({ message: 'Meeting ready! Redirecting…' });
+          toast({ message: 'Meeting ready! Opening flagship 60-min meeting…' });
           setTimeout(() => {
             navigate('/meetings/mtg-q3-roadmap');
-          }, 1200);
-        }, 1200);
-      }, 1200);
-    }, 1200);
+          }, 900);
+        }, 900);
+      }, 900);
+    }, 900);
   };
 
   return (

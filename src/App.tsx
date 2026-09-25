@@ -36,6 +36,7 @@ import { SharedRecipientPage } from './pages/SharedRecipientPage';
 import { LiveSimulationPage } from './pages/LiveSimulationPage';
 import { SettingsPage } from './pages/SettingsPage';
 import { OnboardingPage } from './pages/OnboardingPage';
+import { CalendarPage } from './pages/CalendarPage';
 
 // Tier B App Breadth Pages
 import { TemplatesBuilderPage } from './pages/TemplatesBuilderPage';
@@ -172,6 +173,14 @@ export function App() {
             element={
               <AppShell currentTitle="Settings">
                 <SettingsPage />
+              </AppShell>
+            }
+          />
+          <Route
+            path="/calendar"
+            element={
+              <AppShell currentTitle="Calendar">
+                <CalendarPage />
               </AppShell>
             }
           />

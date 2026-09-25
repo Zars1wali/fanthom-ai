@@ -30,21 +30,23 @@ apiRouter.get('/meetings', (req: Request, res: Response) => {
 });
 
 apiRouter.get('/meetings/:id', (req: Request, res: Response) => {
-  const mtg = db.getMeeting(req.params.id);
+  const id = String(req.params.id);
+  const mtg = db.getMeeting(id);
   if (!mtg) {
-    res.status(404).json({ error: `Meeting not found: ${req.params.id}` });
+    res.status(404).json({ error: `Meeting not found: ${id}` });
     return;
   }
   res.json(mtg);
 });
 
 apiRouter.patch('/meetings/:id', (req: Request, res: Response) => {
+  const id = String(req.params.id);
   const { title } = req.body;
   if (typeof title !== 'string') {
     res.status(400).json({ error: 'Title must be a string' });
     return;
   }
-  const ok = db.renameMeeting(req.params.id, title);
+  const ok = db.renameMeeting(id, title);
   if (!ok) {
     res.status(404).json({ error: 'Meeting not found' });
     return;
@@ -53,12 +55,14 @@ apiRouter.patch('/meetings/:id', (req: Request, res: Response) => {
 });
 
 apiRouter.patch('/meetings/:id/speakers/:speakerId', (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const speakerId = String(req.params.speakerId);
   const { name } = req.body;
   if (!name || typeof name !== 'string') {
     res.status(400).json({ error: 'Valid speaker name required' });
     return;
   }
-  const ok = db.assignSpeaker(req.params.id, req.params.speakerId, name);
+  const ok = db.assignSpeaker(id, speakerId, name);
   if (!ok) {
     res.status(404).json({ error: 'Meeting or speaker not found' });
     return;
@@ -68,12 +72,13 @@ apiRouter.patch('/meetings/:id/speakers/:speakerId', (req: Request, res: Respons
 
 // --- Highlights & Moments ---
 apiRouter.post('/meetings/:id/highlights', (req: Request, res: Response) => {
+  const id = String(req.params.id);
   const { at, note } = req.body;
   if (typeof at !== 'number') {
     res.status(400).json({ error: 'Numeric "at" timestamp required' });
     return;
   }
-  const moment = db.addHighlight(req.params.id, at, note);
+  const moment = db.addHighlight(id, at, note);
   if (!moment) {
     res.status(404).json({ error: 'Meeting not found' });
     return;
@@ -82,7 +87,9 @@ apiRouter.post('/meetings/:id/highlights', (req: Request, res: Response) => {
 });
 
 apiRouter.delete('/meetings/:id/highlights/:momentId', (req: Request, res: Response) => {
-  const ok = db.removeHighlight(req.params.id, req.params.momentId);
+  const id = String(req.params.id);
+  const momentId = String(req.params.momentId);
+  const ok = db.removeHighlight(id, momentId);
   if (!ok) {
     res.status(404).json({ error: 'Moment not found' });
     return;
@@ -92,12 +99,14 @@ apiRouter.delete('/meetings/:id/highlights/:momentId', (req: Request, res: Respo
 
 // --- Bullets & Flags ---
 apiRouter.patch('/meetings/:id/bullets/:bulletId', (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const bulletId = String(req.params.bulletId);
   const { text } = req.body;
   if (typeof text !== 'string') {
     res.status(400).json({ error: 'Text required' });
     return;
   }
-  const ok = db.editBullet(req.params.id, req.params.bulletId, text);
+  const ok = db.editBullet(id, bulletId, text);
   if (!ok) {
     res.status(404).json({ error: 'Bullet or meeting not found' });
     return;
@@ -106,8 +115,10 @@ apiRouter.patch('/meetings/:id/bullets/:bulletId', (req: Request, res: Response)
 });
 
 apiRouter.post('/meetings/:id/bullets/:bulletId/flag', (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const bulletId = String(req.params.bulletId);
   const { reason } = req.body;
-  const ok = db.flagBullet(req.params.id, req.params.bulletId, reason || 'Inaccurate');
+  const ok = db.flagBullet(id, bulletId, reason || 'Inaccurate');
   if (!ok) {
     res.status(404).json({ error: 'Meeting not found' });
     return;
@@ -117,12 +128,14 @@ apiRouter.post('/meetings/:id/bullets/:bulletId/flag', (req: Request, res: Respo
 
 // --- Actions ---
 apiRouter.patch('/meetings/:id/actions/:actionId', (req: Request, res: Response) => {
+  const id = String(req.params.id);
+  const actionId = String(req.params.actionId);
   const { done } = req.body;
   if (typeof done !== 'boolean') {
     res.status(400).json({ error: 'Boolean "done" required' });
     return;
   }
-  const ok = db.toggleAction(req.params.id, req.params.actionId, done);
+  const ok = db.toggleAction(id, actionId, done);
   if (!ok) {
     res.status(404).json({ error: 'Action item not found' });
     return;
@@ -132,12 +145,13 @@ apiRouter.patch('/meetings/:id/actions/:actionId', (req: Request, res: Response)
 
 // --- Templates & Summaries ---
 apiRouter.post('/meetings/:id/summary/template', (req: Request, res: Response) => {
+  const id = String(req.params.id);
   const { template } = req.body;
   if (!template || typeof template !== 'string') {
     res.status(400).json({ error: 'Template ID required' });
     return;
   }
-  const summary = db.switchTemplate(req.params.id, template);
+  const summary = db.switchTemplate(id, template);
   if (!summary) {
     res.status(404).json({ error: 'Meeting not found' });
     return;
@@ -203,7 +217,8 @@ apiRouter.post('/shares', (req: Request, res: Response) => {
 });
 
 apiRouter.get('/shares/:token', (req: Request, res: Response) => {
-  const shared = db.getShared(req.params.token);
+  const token = String(req.params.token);
+  const shared = db.getShared(token);
   if (!shared) {
     res.status(404).json({ error: 'Share link expired or not found' });
     return;
@@ -217,12 +232,13 @@ apiRouter.get('/calendar', (_req: Request, res: Response) => {
 });
 
 apiRouter.patch('/calendar/:id', (req: Request, res: Response) => {
+  const id = String(req.params.id);
   const { record } = req.body;
   if (typeof record !== 'boolean') {
     res.status(400).json({ error: 'Boolean "record" parameter required' });
     return;
   }
-  const ok = db.toggleCalendarRecord(req.params.id, record);
+  const ok = db.toggleCalendarRecord(id, record);
   if (!ok) {
     res.status(404).json({ error: 'Calendar event not found' });
     return;

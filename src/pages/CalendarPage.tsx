@@ -227,7 +227,7 @@ export const CalendarPage: React.FC = () => {
                       {isExternal ? (
                         <Chip variant="ok">External Prospect</Chip>
                       ) : (
-                        <Chip variant="ghost">Internal Team</Chip>
+                        <Chip variant="default">Internal Team</Chip>
                       )}
                       <span style={{ fontSize: '12px', color: 'var(--ink-3)' }}>
                         {startDate.toLocaleDateString([], { weekday: 'short', month: 'short', day: 'numeric' })} at{' '}

@@ -157,6 +157,24 @@ export const LiveSimulationPage: React.FC = () => {
         <div style={{ background: 'var(--surface)', border: '1px solid var(--line)', borderRadius: 'var(--radius-panel)', padding: '32px', display: 'flex', flexDirection: 'column', gap: '20px' }}>
           <div>
             <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px', display: 'block' }}>
+              Meeting Title:
+            </label>
+            <input
+              type="text"
+              value={meetingTitle}
+              onChange={(e) => setMeetingTitle(e.target.value)}
+              placeholder="e.g. 2-Minute Self-Test Call"
+              style={{
+                width: '100%',
+                padding: '10px 14px',
+                fontSize: '14px',
+                borderRadius: 'var(--radius-control)',
+                border: '1px solid var(--line)',
+                background: '#ffffff',
+                marginBottom: '16px',
+              }}
+            />
+            <label style={{ fontSize: '13px', fontWeight: 700, color: 'var(--ink)', marginBottom: '8px', display: 'block' }}>
               Meeting URL (Google Meet, Zoom, or Teams):
             </label>
             <input

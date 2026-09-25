@@ -5,8 +5,8 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
-    "server": "tsx backend/server.ts",
-    "test:backend": "tsx backend/test/smoke.ts",
+    "server": "tsx server/server.ts",
+    "test:backend": "tsx server/test/smoke.ts",
     "build": "tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"

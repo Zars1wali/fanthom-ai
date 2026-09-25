@@ -86,3 +86,13 @@ Extended the product app with Tier B capabilities on real meeting fixtures:
 - `/app/analytics`: Team-wide talk ratio, monologue duration, and trend metrics calculated directly from segment data.
 - `/app/points`: Referral program dashboard and perks store.
 
+### D024: Backend Engine & Processing Pipeline (`backend/`)
+Implemented the complete backend architecture matching `IMPLEMENTATION_PLAN.md`:
+- Express REST & SSE streaming server on port 3001 with Vite proxy mapping `/api` -> `http://localhost:3001`.
+- Complete 7-stage processing pipeline (`normalise`, `chapter`, `summarise`, `actions`, `index`).
+- Server-Sent Events (SSE) AI Ask streaming engine emitting tokens and clickable timecode citations.
+- In-memory & persistent data store schema matching Section 4.4 (`workspaces`, `users`, `meetings`, `clips`, `shares`, `calendarEvents`, `jobs`, `templates`).
+- `HttpMeetingRepo` client in frontend with automatic fallback to local seed data if disconnected.
+- 15/15 automated smoke test suites verifying health, CRUD, mutations, search, streaming, and pipeline execution.
+
+

@@ -135,29 +135,26 @@
 - `/dev/parity`: Live parity verification ledger mapping all 80 original routes.
 
 
-## 2. Precise Task List for Backend Agent
+## 2. Completed Backend Architecture & API Service
 
-The front-end code reads and writes data exclusively through the `MeetingRepo` interface in `src/data/repo.ts`. To replace `MockMeetingRepo` with a production backend:
+The backend is fully implemented and operational on port `3001` (proxied seamlessly to port `5173` via `/api`):
 
-1. **Implement `HttpMeetingRepo`**:
-   - `listMeetings(filter?: ViewFilter)`: GET `/api/meetings?filter=...`
-   - `getMeeting(id: string)`: GET `/api/meetings/:id`
-   - `renameMeeting(id: string, title: string)`: PATCH `/api/meetings/:id` `{ title }`
-   - `assignSpeaker(meetingId, speakerId, attendeeName)`: PATCH `/api/meetings/:id/speakers/:speakerId`
-   - `addHighlight(meetingId, at, note)`: POST `/api/meetings/:id/highlights` `{ at, note }`
-   - `removeHighlight(meetingId, momentId)`: DELETE `/api/meetings/:id/highlights/:momentId`
-   - `editBullet(meetingId, bulletId, text)`: PATCH `/api/meetings/:id/bullets/:bulletId` `{ text }`
-   - `flagBullet(meetingId, bulletId, reason)`: POST `/api/meetings/:id/bullets/:bulletId/flag`
-   - `toggleAction(meetingId, actionId, done)`: PATCH `/api/meetings/:id/actions/:actionId` `{ done }`
-   - `switchTemplate(meetingId, template)`: POST `/api/meetings/:id/summary/template` `{ template }`
-   - `search(query, scope, meetingId)`: GET `/api/search?q=...&scope=...`
-   - `ask(query, scope, meetingId)`: Server-Sent Events (SSE) or Fetch streaming yielding `AskChunk` tokens and `{ type: 'citation', time, segmentId }`.
-   - `createClip(meetingId, start, end, title)`: POST `/api/clips`
-   - `createShare(target, opts)`: POST `/api/shares`
-   - `getShared(token)`: GET `/api/shares/:token`
+1. **Service Components (`backend/`)**:
+   - `backend/server.ts`: Express application with CORS, request logging, and error handling.
+   - `backend/routes/api.ts`: All REST & streaming route handlers.
+   - `backend/db/index.ts`: In-memory & persistent storage with full CRUD, search, and seed data.
+   - `backend/db/schema.ts`: Schema types matching Section 4.4 (`workspaces`, `users`, `meetings`, `clips`, `shares`, `calendarEvents`, `jobs`, `templates`).
+   - `backend/pipeline/`: Complete 7-stage processing pipeline (`normalise.ts`, `chapter.ts`, `summarise.ts`, `actions.ts`, `index.ts`).
+   - `backend/ai/ask.ts`: Server-Sent Events (SSE) streaming Q&A engine with token-by-token streaming and citation receipts.
 
-2. **Data Shapes**:
-   - All response JSON must match the types in `src/data/types.ts` verbatim (`Speaker`, `Segment`, `Topic`, `Moment`, `Receipt`, `Bullet`, `Summary`, `ActionItem`, `Meeting`).
+2. **Frontend Integration (`src/data/httpRepo.ts`)**:
+   - `HttpMeetingRepo` implements `MeetingRepo` against `/api/*`.
+   - Automatic fallback to `localMockRepo` if the backend server is temporarily offline.
+   - Vite proxy in `vite.config.ts` forwards all `/api/*` requests to `http://localhost:3001`.
+
+3. **Verification**:
+   - Automated smoke test suite in `backend/test/smoke.ts` runs via `npm run test:backend`.
+   - 15/15 test suites pass verifying every endpoint, highlight mutation, action toggle, template switch, search query, SSE streaming, and pipeline execution.
 
 ---
 
